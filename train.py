@@ -81,7 +81,7 @@ def main():
     job_id = now()
 
     cfg = Config(parse_args())
-    os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(map(str, cfg.run.gpu_ids))
+    
 
     init_distributed_mode(cfg.run_cfg)
 
