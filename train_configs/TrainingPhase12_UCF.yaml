@@ -8,7 +8,7 @@ model:
   num_query_token: 32
 
   # Vicuna
-  llama_model: "VAD_LLaMa/ckpt/vicuna-7b/"
+  llama_model: "helloollel/vicuna-7b"
 
   #VAD
   frozen_VAD_decoder: False

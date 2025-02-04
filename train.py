@@ -106,4 +106,5 @@ def main():
 
 
 if __name__ == "__main__":
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
     main()
