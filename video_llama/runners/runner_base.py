@@ -81,6 +81,7 @@ class RunnerBase:
         """
         A property to get the DDP-wrapped model on the device.
         """
+        os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
         # move model to device
         if self._model.device != self.device:
             self._model = self._model.to(self.device)
