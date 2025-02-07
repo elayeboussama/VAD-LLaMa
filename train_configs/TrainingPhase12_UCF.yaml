@@ -17,7 +17,7 @@ model:
 
   # llama project 
   frozen_llama_proj: True
-  llama_proj_model: 'VAD_LLaMa/ckpt/pretrained_minigpt4.pth'
+  llama_proj_model: '/kaggle/working/VAD_LLaMa/ckpt/pretrained_minigpt4.pth'
   frozen_audio_Qformer: True
 
   fusion_head_layers: 2
@@ -26,9 +26,9 @@ model:
 
   max_txt_len: 320
   end_sym: "###"
-  prompt_path: "VAD_LLaMa/prompts/alignment_image.txt"
+  prompt_path: "/kaggle/working/VAD_LLaMa/prompts/alignment_image.txt"
   prompt_template: '###Human: {} ###Assistant: '
-  ckpt: 'VAD_LLaMa/ckpt/finetune-vicuna7b-v2.pth'
+  ckpt: '/kaggle/working/VAD_LLaMa/ckpt/finetune-vicuna7b-v2.pth'
   imagebind_ckpt_path: "nielsr/imagebind-huge"
   
 
@@ -36,9 +36,9 @@ datasets:
   vad_instruct:
       data_type: video
       build_info:
-        anno_dir: VAD_LLaMa/data/UCF_Instruct.json
-        eval_anno_dir: VAD_LLaMa/data/UCF_Eval.json
-        videos_dir: VAD_LLaMa/data/ucf/
+        anno_dir: /kaggle/working/VAD_LLaMa/data/UCF_Instruct.json
+        eval_anno_dir: /kaggle/working/VAD_LLaMa/data/UCF_Eval.json
+        videos_dir: /kaggle/working/VAD_LLaMa/data/ucf/
       vis_processor:
         train:
           name: "alpro_video_train"
@@ -75,7 +75,7 @@ run:
   warmup_steps: 1000
 
   seed: 42
-  output_dir: "VAD_LLaMa/output/ucf"
+  output_dir: "/kaggle/working/VAD_LLaMa/output/ucf"
 
   amp: True
   resume_ckpt_path: null
