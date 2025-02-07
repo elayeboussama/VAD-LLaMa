@@ -8,7 +8,7 @@ model:
   num_query_token: 32
 
   # Vicuna
-  llama_model: "helloollel/vicuna-7b"
+  llama_model: "Vision-CAIR/vicuna-7b"
 
   #VAD
   frozen_VAD_decoder: False
@@ -29,7 +29,7 @@ model:
   prompt_path: "VAD_LLaMa/prompts/alignment_image.txt"
   prompt_template: '###Human: {} ###Assistant: '
   ckpt: 'VAD_LLaMa/ckpt/finetune-vicuna7b-v2.pth'
-  imagebind_ckpt_path: "VAD_LLaMa/ckpt/"
+  imagebind_ckpt_path: "nielsr/imagebind-huge"
   
 
 datasets:
@@ -54,7 +54,7 @@ datasets:
         eval:
           name: "blip_caption"
       num_video_query_token: 32
-      tokenizer_name: "helloollel/vicuna-7b"
+      tokenizer_name: "Vision-CAIR/vicuna-7b"
       test_flag: False
 
 run:
@@ -67,11 +67,11 @@ run:
 
   beta2: 0.98
   weight_decay: 0.001
-  max_epoch: 30
-  iters_per_epoch: 10
-  batch_size_train: 8
-  batch_size_eval: 5
-  num_workers: 8
+  max_epoch: 10
+  iters_per_epoch: 2
+  batch_size_train: 4
+  batch_size_eval: 2
+  num_workers: 4
   warmup_steps: 1000
 
   seed: 42
@@ -85,6 +85,6 @@ run:
   valid_splits: ["eval"]
 
   device: "cuda"
-  world_size: 1
+  world_size: 2
   dist_url: "env://"
   distributed: True
