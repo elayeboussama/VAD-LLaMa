@@ -74,7 +74,7 @@ def process_videos(video_dir, save_dir, filename_tmpl='img_{:08d}.jpg'):
 
 if __name__ == '__main__':
     # Configure these paths according to your setup
-    video_dir = 'VAD_LLaMa/data/ucf'  # Directory containing your videos
-    save_dir = 'VAD_LLaMa/data/ucf/frames'     # Directory to save extracted frames
+    video_dir = '/kaggle/working/VAD_LLaMa/data/ucf'  # Directory containing your videos
+    save_dir = '/kaggle/working/VAD_LLaMa/data/ucf/frames'     # Directory to save extracted frames
     
     process_videos(video_dir, save_dir)
