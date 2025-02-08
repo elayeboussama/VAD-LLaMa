@@ -138,7 +138,11 @@ def main():
     scaler = amp.GradScaler()
     
     for data in dataloader:
-        # ...
+        # Unpack the data
+        inputs = data['image']  # Assuming 'image' is the correct key
+        labels = data['labels']  # Assuming 'labels' is the correct key
+        
+        # Enable mixed precision training
         with amp.autocast():
             outputs = model(inputs)
             loss = criterion(outputs, labels)
