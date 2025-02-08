@@ -16,6 +16,7 @@ import torch.backends.cudnn as cudnn
 import torch.cuda.amp as amp
 from torch.utils.data import DataLoader
 from torch.utils.data.dataloader import default_collate
+from torch.nn.utils.rnn import pad_sequence
 
 import video_llama.tasks as tasks
 from video_llama.common.config import Config
@@ -77,8 +78,11 @@ def get_runner_class(cfg):
 
 # Custom collate function
 def custom_collate_fn(batch):
-    # You can add logic here to handle variable-sized inputs
-    return default_collate(batch)
+    # Assuming each item in the batch is a tuple (data, label)
+    data, labels = zip(*batch)
+    # Pad the data if they are sequences
+    data = pad_sequence(data, batch_first=True)  # Adjust based on your data structure
+    return data, labels
 
 
 def main():
