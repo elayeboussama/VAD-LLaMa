@@ -15,6 +15,7 @@ import torch
 import torch.backends.cudnn as cudnn
 import torch.cuda.amp as amp
 from torch.utils.data import DataLoader
+from torch.utils.data.dataloader import default_collate
 
 import video_llama.tasks as tasks
 from video_llama.common.config import Config
@@ -74,6 +75,12 @@ def get_runner_class(cfg):
     return runner_cls
 
 
+# Custom collate function
+def custom_collate_fn(batch):
+    # You can add logic here to handle variable-sized inputs
+    return default_collate(batch)
+
+
 def main():
     # allow auto-dl completes on main process without timeout when using NCCL backend.
     # os.environ["NCCL_BLOCKING_WAIT"] = "1"
@@ -97,11 +104,10 @@ def main():
     task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)
 
-# Create DataLoader for training
+    # Create DataLoader for training
     train_dataset = datasets['vad_instruct']['train']  # Adjust this based on your dataset structure
-    dataloader = DataLoader(train_dataset, batch_size=cfg.run_cfg.batch_size_train, shuffle=True, num_workers=cfg.run_cfg.num_workers)
+    dataloader = DataLoader(train_dataset, batch_size=cfg.run_cfg.batch_size_train, shuffle=True, num_workers=cfg.run_cfg.num_workers, collate_fn=custom_collate_fn)
 
- 
     # datasets['webvid']['train'][0]
     # import pdb;pdb.set_trace()
     # datasets
