@@ -14,6 +14,7 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 import torch.cuda.amp as amp
+from torch.utils.data import DataLoader
 
 import video_llama.tasks as tasks
 from video_llama.common.config import Config
