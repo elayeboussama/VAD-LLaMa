@@ -72,6 +72,11 @@ def process_videos(video_dir, save_dir, filename_tmpl='img_{:08d}.jpg'):
             print(f"Extracted {n_frames} frames from {video_path}")
             video_list_file.write(f"{video_path}\n")
 
+def load_data():
+    # Use a generator to load data efficiently
+    for file in data_files:
+        yield process_file(file)  # Lazy loading of data
+
 if __name__ == '__main__':
     # Configure these paths according to your setup
     video_dir = '/kaggle/working/VAD_LLaMa/data/ucf'  # Directory containing your videos
