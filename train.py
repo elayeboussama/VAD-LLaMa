@@ -96,6 +96,11 @@ def main():
     task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)
 
+# Create DataLoader for training
+    train_dataset = datasets['vad_instruct']['train']  # Adjust this based on your dataset structure
+    dataloader = DataLoader(train_dataset, batch_size=cfg.run_cfg.batch_size_train, shuffle=True, num_workers=cfg.run_cfg.num_workers)
+
+ 
     # datasets['webvid']['train'][0]
     # import pdb;pdb.set_trace()
     # datasets
