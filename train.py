@@ -138,9 +138,12 @@ def main():
     scaler = amp.GradScaler()
     
     for data in dataloader:
-        # Unpack the data
-        inputs = data['image']  # Assuming 'image' is the correct key
-        labels = data['labels']  # Assuming 'labels' is the correct key
+        # Check if data is a tuple
+        if isinstance(data, tuple):
+            inputs, labels = data  # Adjust based on the actual structure of the tuple
+        else:
+            inputs = data['image']  # Assuming 'image' is the correct key
+            labels = data['labels']  # Assuming 'labels' is the correct key
         
         # Enable mixed precision training
         with amp.autocast():
