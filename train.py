@@ -97,7 +97,6 @@ def custom_collate_fn(batch):
     data = pad_sequence(data, batch_first=True)  # Adjust based on your data structure
     return data, labels
 
-
 def main():
     # allow auto-dl completes on main process without timeout when using NCCL backend.
     # os.environ["NCCL_BLOCKING_WAIT"] = "1"
@@ -107,7 +106,6 @@ def main():
     job_id = now()
 
     cfg = Config(parse_args())
-    
 
     init_distributed_mode(cfg.run_cfg)
 
@@ -121,59 +119,13 @@ def main():
     task = tasks.setup_task(cfg)
     datasets = task.build_datasets(cfg)
 
-    # Create DataLoader for training
-    train_dataset = datasets['vad_instruct']['train']  # Adjust this based on your dataset structure
-    dataloader = DataLoader(train_dataset, batch_size=cfg.run_cfg.batch_size_train, shuffle=True, num_workers=cfg.run_cfg.num_workers, collate_fn=custom_collate_fn)
-
-    # datasets['webvid']['train'][0]
-    # import pdb;pdb.set_trace()
-    # datasets
     model = task.build_model(cfg)
 
     runner = get_runner_class(cfg)(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
     )
 
-    # Enable mixed precision training
-    scaler = amp.GradScaler()
-    
-    # Define the loss function
-    criterion = torch.nn.CrossEntropyLoss()  # Adjust based on your task
-    # Define the optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.run_cfg.init_lr)  # Adjust based on your task
-
-    for data in dataloader:
-        # Check if data is a tuple
-        if isinstance(data, tuple):
-            inputs, labels = data  # Adjust based on the actual structure of the tuple
-            model_inputs = {
-                'image': inputs,  # Assuming inputs is the image tensor
-                # Add any other necessary keys here if needed
-            }
-        else:
-            inputs = data['image']  # Assuming 'image' is the correct key
-            labels = data['labels']  # Assuming 'labels' is the correct key
-            model_inputs = {
-                'image': inputs,
-                'text_input': data['text_input'],  # Assuming 'text_input' is also needed
-            }
-        
-        # Enable mixed precision training
-        with amp.autocast():
-            outputs = model(model_inputs)  # Pass the dictionary to the model
-            
-            # Debugging: Check the outputs
-            print("Model outputs:", outputs)  # Add this line to inspect the outputs
-            
-            loss = criterion(outputs, labels)
-        
-        # Backward pass
-        scaler.scale(loss).backward()
-        scaler.step(optimizer)
-        scaler.update()
-
     runner.train()
-
 
 if __name__ == "__main__":
     main()
