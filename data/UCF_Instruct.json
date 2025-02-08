@@ -352,7 +352,7 @@
         ]
     },
     {
-        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_801_x264",
+        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_801_x264.mp4",
         "video_label": "2744",
         "length": 2744,
         "QA": [
@@ -363,7 +363,7 @@
         ]
     },
     {
-        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_828_x264",
+        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_828_x264.mp4",
         "video_label": "930",
         "length": 930,
         "QA": [
@@ -374,7 +374,7 @@
         ]
     },
     {
-        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_831_x264",
+        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_831_x264.mp4",
         "video_label": "448",
         "length": 448,
         "QA": [
@@ -385,7 +385,7 @@
         ]
     },
     {
-        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_877_x264",
+        "video": "frames/Training_Normal_Videos_Anomaly/Normal_Videos_877_x264.mp4",
         "video_label": "10025",
         "length": 10025,
         "QA": [
