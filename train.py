@@ -141,16 +141,18 @@ def main():
         # Check if data is a tuple
         if isinstance(data, tuple):
             inputs, labels = data  # Adjust based on the actual structure of the tuple
+            # Assuming the tuple contains inputs and labels directly
+            model_inputs = {
+                'image': inputs,  # Assuming inputs is the image tensor
+                # Add any other necessary keys here if needed
+            }
         else:
             inputs = data['image']  # Assuming 'image' is the correct key
             labels = data['labels']  # Assuming 'labels' is the correct key
-
-        # Create a dictionary to pass to the model
-        model_inputs = {
-            'image': inputs,
-            'text_input': data['text_input'],  # Assuming 'text_input' is also needed
-            # Add any other necessary keys here
-        }
+            model_inputs = {
+                'image': inputs,
+                'text_input': data['text_input'],  # Assuming 'text_input' is also needed
+            }
         
         # Enable mixed precision training
         with amp.autocast():
