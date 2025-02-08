@@ -13,6 +13,7 @@ import random
 import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
+import torch.cuda.amp as amp
 
 import video_llama.tasks as tasks
 from video_llama.common.config import Config
@@ -103,6 +104,21 @@ def main():
     runner = get_runner_class(cfg)(
         cfg=cfg, job_id=job_id, task=task, model=model, datasets=datasets
     )
+
+    # Enable mixed precision training
+    scaler = amp.GradScaler()
+    
+    for data in dataloader:
+        # ...
+        with amp.autocast():
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+        
+        # Backward pass
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
+
     runner.train()
 
 
