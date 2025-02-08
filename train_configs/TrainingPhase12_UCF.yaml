@@ -85,6 +85,6 @@ run:
   valid_splits: ["eval"]
 
   device: "cuda"
-  world_size: 1
+  world_size: 2
   dist_url: "env://"
   distributed: True
