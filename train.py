@@ -78,8 +78,17 @@ def get_runner_class(cfg):
 
 # Custom collate function
 def custom_collate_fn(batch):
-    # Assuming each item in the batch is a tuple (data, label)
-    data, labels = zip(*batch)
+    # Debugging: Print the structure of the batch
+    print("Batch structure:", batch)  # Add this line to inspect the batch structure
+
+    # Adjust unpacking based on the actual structure of the items in the batch
+    # Example: If each item is a dictionary, you might do:
+    if isinstance(batch[0], dict):
+        data = [item['data'] for item in batch]  # Adjust the key based on your dataset
+        labels = [item['label'] for item in batch]  # Adjust the key based on your dataset
+    else:
+        data, labels = zip(*batch)  # Original unpacking logic
+
     # Pad the data if they are sequences
     data = pad_sequence(data, batch_first=True)  # Adjust based on your data structure
     return data, labels
