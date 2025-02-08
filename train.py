@@ -137,6 +137,11 @@ def main():
     # Enable mixed precision training
     scaler = amp.GradScaler()
     
+    # Define the loss function
+    criterion = torch.nn.CrossEntropyLoss()  # Adjust based on your task
+    # Define the optimizer
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.run_cfg.init_lr)  # Adjust based on your task
+
     for data in dataloader:
         # Check if data is a tuple
         if isinstance(data, tuple):
