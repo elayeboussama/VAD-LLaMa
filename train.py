@@ -84,8 +84,12 @@ def custom_collate_fn(batch):
     # Adjust unpacking based on the actual structure of the items in the batch
     # Example: If each item is a dictionary, you might do:
     if isinstance(batch[0], dict):
-        data = [item['data'] for item in batch]  # Adjust the key based on your dataset
-        labels = [item['label'] for item in batch]  # Adjust the key based on your dataset
+        # Check the keys in the first item to understand the structure
+        print("Keys in first item:", batch[0].keys())  # Debugging line to check keys
+
+        # Adjust the keys based on your dataset's structure
+        data = [item['image'] for item in batch]  # Assuming 'image' is the correct key
+        labels = [item['labels'] for item in batch]  # Assuming 'labels' is the correct key
     else:
         data, labels = zip(*batch)  # Original unpacking logic
 
