@@ -97,7 +97,7 @@ class BaseTask:
     def inference_step(self):
         raise NotImplementedError
 
-    def evaluation(self, model, data_loader, test_flag=False, cur_epoch='tmp', cuda_enabled=True):
+    def evaluation(self, model, data_loader, test_flag=False, cur_epoch='tmp', cuda_enabled=True, fp16_enabled=True):
         metric_logger = MetricLogger(delimiter="  ")
         header = "Evaluation"
         # TODO make it configurable
@@ -120,7 +120,7 @@ class BaseTask:
         # pdb.set_trace()
         for samples in metric_logger.log_every(range(len(data_loader)), print_freq, header):
             samples = next(data_loader)
-            samples = prepare_sample(samples, cuda_enabled=cuda_enabled)
+            samples = prepare_sample(samples, cuda_enabled=cuda_enabled, fp16_enabled=fp16_enabled)
 
             samples['his'] = his_hidden_state
             ind = -1
@@ -342,7 +342,8 @@ class BaseTask:
         scaler=None,
         start_iters=None,
         log_freq=50,
-        cuda_enabled=False,
+        cuda_enabled=False, 
+        fp16_enabled=True,
         accum_grad_iters=1,
     ):
         """
@@ -383,7 +384,7 @@ class BaseTask:
                 break
 
             samples = next(data_loader)
-            samples = prepare_sample(samples, cuda_enabled=cuda_enabled)
+            samples = prepare_sample(samples, cuda_enabled=cuda_enabled, fp16_enabled=fp16_enabled)
             samples.update(
                 {
                     "epoch": inner_epoch,
