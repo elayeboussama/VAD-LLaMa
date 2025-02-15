@@ -87,13 +87,25 @@ def move_to_cuda(sample):
     return apply_to_sample(_move_to_cuda, sample)
 
 
-def prepare_sample(samples, cuda_enabled=True):
+def prepare_sample(samples, cuda_enabled=True, fp16_enabled=False):
     if cuda_enabled:
         samples = move_to_cuda(samples)
 
-    # TODO fp16 support
+    if fp16_enabled:
+        samples = apply_half_precision(samples)
 
     return samples
+
+def apply_half_precision(samples):
+    if isinstance(samples, torch.Tensor):
+        # Convert to FP16
+        return samples.half()  
+    elif isinstance(samples, dict):
+        return {k: apply_half_precision(v) for k, v in samples.items()}
+    elif isinstance(samples, list):
+        return [apply_half_precision(v) for v in samples]
+    # Return as is if not tensor-like
+    return samples  
 
 
 def reorg_datasets_by_split(datasets):
