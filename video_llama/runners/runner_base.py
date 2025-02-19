@@ -82,19 +82,20 @@ class RunnerBase:
         A property to get the DDP-wrapped model on the device.
         """
         torch.cuda.empty_cache()
-        # move model to device
-        if self._model.device != self.device:
+        # If the model has been loaded with a device map (e.g. hf_device_map) then
+        # skip moving it via .to(self.device) because it's already on the correct GPUs.
+        if not getattr(self._model, "hf_device_map", None) and (getattr(self._model, "device", None) != self.device):
             self._model = self._model.to(self.device)
 
-            # distributed training wrapper
-            if self.use_distributed:
-                if self._wrapped_model is None:
-                    self._wrapped_model = DDP(
-                        self._model, device_ids=[self.config.run_cfg.gpu]
-                    )
-            else:
-                self._wrapped_model = self._model
-
+        # Wrap model in distributed data parallel if needed
+        if self.use_distributed:
+            if self._wrapped_model is None:
+                local_gpu = torch.cuda.current_device()
+                self._wrapped_model = DDP(
+                    self._model, device_ids=[local_gpu]
+                )
+        else:
+            self._wrapped_model = self._model
         return self._wrapped_model
 
     @property
