@@ -412,19 +412,6 @@ def convert_weights_to_fp16(model: nn.Module):
 #                     tensor.data = tensor.data.half()
 
     model.apply(_convert_weights_to_fp16)
-
-def convert_weights_to_int8(model: nn.Module):
-    """Convert applicable model parameters to INT8"""
-
-    def _convert_weights_to_int8(layer):
-        if isinstance(layer, (nn.Conv1d, nn.Conv2d, nn.Linear)):
-            # Convert weights to int8 format
-            layer.weight.data = layer.weight.data.to(torch.qint8)
-            if layer.bias is not None:
-                layer.bias.data = layer.bias.data.to(torch.qint8)
-
-    model.apply(_convert_weights_to_int8)
-
     
     
 def create_eva_vit_g(img_size=224,drop_path_rate=0.4,use_checkpoint=False,precision="fp16"):
@@ -454,8 +441,4 @@ def create_eva_vit_g(img_size=224,drop_path_rate=0.4,use_checkpoint=False,precis
     if precision == "fp16":
 #         model.to("cuda") 
         convert_weights_to_fp16(model)
-    
-    if precision == "int8":
-#         model.to("cuda") 
-        convert_weights_to_int8(model)
     return model
