@@ -54,7 +54,8 @@ class VideoLLAMA(Blip2Base):
             img_size=224,
             drop_path_rate=0,
             use_grad_checkpoint=False,
-            vit_precision="fp16",
+            # vit_precision="fp16",
+            vit_precision="int8",
             freeze_vit=True,
             freeze_qformer=True,
             num_query_token=32,
@@ -140,13 +141,21 @@ class VideoLLAMA(Blip2Base):
             self.llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model,
                 torch_dtype=torch.bfloat16,
-                load_in_8bit=True,
-                device_map={'': device_8bit}
+                load_in_4bit=True,
+                device_map="auto",
+                bnb_4bit_compute_dtype=torch.float16,  # FP16 for better performance
+                bnb_4bit_quant_type="nf4",  # NormalFloat4 (best for GPUs)
+                llm_int8_threshold=6.0  # Prevents instability
             )
         else:
             self.llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model,
                 torch_dtype=torch.bfloat16,
+                load_in_4bit=True,
+                device_map="auto",
+                bnb_4bit_compute_dtype=torch.float16,  # FP16 for better performance
+                bnb_4bit_quant_type="nf4",  # NormalFloat4 (best for GPUs)
+                llm_int8_threshold=6.0  # Prevents instability
             )
 
         for name, param in self.llama_model.named_parameters():
