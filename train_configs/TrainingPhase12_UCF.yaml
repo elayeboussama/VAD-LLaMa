@@ -8,7 +8,7 @@ model:
   num_query_token: 32
 
   # Vicuna
-  llama_model: "Vision-CAIR/vicuna-7b"
+  llama_model: "TheBloke/Wizard-Vicuna-7B-Uncensored-AWQ"
 
   #VAD
   frozen_VAD_decoder: False
