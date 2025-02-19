@@ -12,6 +12,7 @@ from video_llama.models.modeling_llama import LlamaForCausalLM
 # from video_llama.models.Qformer import BertEncoder
 from transformers import LlamaTokenizer, BertConfig
 from transformers import StoppingCriteria, StoppingCriteriaList
+from transformers import BitsAndBytesConfig
 # from transformers.models.bert.modeling_bert import BertEncoder
 import einops
 import copy
@@ -54,8 +55,7 @@ class VideoLLAMA(Blip2Base):
             img_size=224,
             drop_path_rate=0,
             use_grad_checkpoint=False,
-            # vit_precision="fp16",
-            vit_precision="int8",
+            vit_precision="fp16",
             freeze_vit=True,
             freeze_qformer=True,
             num_query_token=32,
@@ -138,24 +138,23 @@ class VideoLLAMA(Blip2Base):
 
         logging.info('Loading LLAMA Model')
         if self.low_resource:
+            # Configure 4-bit (int4) quantization (using nf4 type)
+            quant_config = BitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_compute_dtype=torch.bfloat16,
+                bnb_4bit_use_double_quant=True,
+                bnb_4bit_quant_type="nf4"
+            )
             self.llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model,
                 torch_dtype=torch.bfloat16,
-                load_in_4bit=True,
-                device_map="auto",
-                bnb_4bit_compute_dtype=torch.float16,  # FP16 for better performance
-                bnb_4bit_quant_type="nf4",  # NormalFloat4 (best for GPUs)
-                llm_int8_threshold=6.0  # Prevents instability
+                quantization_config=quant_config,
+                device_map={'': device_8bit}
             )
         else:
             self.llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model,
                 torch_dtype=torch.bfloat16,
-                load_in_4bit=True,
-                device_map="auto",
-                bnb_4bit_compute_dtype=torch.float16,  # FP16 for better performance
-                bnb_4bit_quant_type="nf4",  # NormalFloat4 (best for GPUs)
-                llm_int8_threshold=6.0  # Prevents instability
             )
 
         for name, param in self.llama_model.named_parameters():
@@ -712,3 +711,4 @@ class VideoLLAMA(Blip2Base):
             ckpt = torch.load(ckpt_path, map_location="cpu")
             msg = model.load_state_dict(ckpt['model'], strict=False)
         return model
+
