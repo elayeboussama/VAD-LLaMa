@@ -151,12 +151,13 @@ class VideoLLAMA(Blip2Base):
                 llama_model,
                 torch_dtype=torch.bfloat16,
                 quantization_config=quant_config,
-                device_map={'': device_8bit}
+                device_map="balanced"  # distribute model across GPUs
             )
         else:
             self.llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model,
                 torch_dtype=torch.bfloat16,
+                device_map="balanced"  # distribute model across GPUs
             )
 
         for name, param in self.llama_model.named_parameters():
