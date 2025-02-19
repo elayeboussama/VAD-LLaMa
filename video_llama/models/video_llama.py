@@ -1,5 +1,7 @@
 import logging
 import random
+import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:128"
 
 import torch
 from torch.cuda.amp import autocast as autocast
