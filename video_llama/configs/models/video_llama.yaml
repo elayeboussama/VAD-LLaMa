@@ -8,7 +8,8 @@ model:
   vit_precision: "fp16"
   freeze_vit: True
   freeze_qformer: True
-
+  use_8bit: true
+  
   # Q-Former
   num_query_token: 32
 
