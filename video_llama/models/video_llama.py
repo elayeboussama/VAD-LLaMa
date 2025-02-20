@@ -67,8 +67,8 @@ class VideoLLAMA(Blip2Base):
             prompt_template="",
             max_txt_len=32,
             end_sym='\n',
-            low_resource=False,  # use 8 bit and put vit in cpu
-            device_8bit=0,  # the device of 8bit model should be set when loading and cannot be changed anymore.
+            low_resource=False,  # use quantization
+            use_4bit=False,  # use 4-bit quantization
 
             frozen_llama_proj=True,
             frozen_video_Qformer=True,
@@ -139,8 +139,8 @@ class VideoLLAMA(Blip2Base):
         self.IMAGE_PATCH_TOKEN_ID = self.llama_tokenizer.get_vocab()[DEFAULT_IMAGE_PATCH_TOKEN]
 
         logging.info('Loading LLAMA Model')
-        if self.low_resource:
-            # Configure 4-bit (int4) quantization (using nf4 type)
+        if use_4bit:
+            # Configure 4-bit quantization (using NF4 type)
             quant_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_compute_dtype=torch.bfloat16,
@@ -650,7 +650,7 @@ class VideoLLAMA(Blip2Base):
         freeze_vit = cfg.get("freeze_vit", True)
         freeze_qformer = cfg.get("freeze_qformer", True)
         low_resource = cfg.get("low_resource", False)
-        device_8bit = cfg.get("device_8bit", 0)
+        use_4bit = cfg.get("use_4bit", False)
 
         prompt_path = cfg.get("prompt_path", "")
         prompt_template = cfg.get("prompt_template", "")
@@ -689,7 +689,7 @@ class VideoLLAMA(Blip2Base):
             max_txt_len=max_txt_len,
             end_sym=end_sym,
             low_resource=low_resource,
-            device_8bit=device_8bit,
+            use_4bit=use_4bit,
             fusion_header_type=fusion_header_type,
             max_frame_pos=max_frame_pos,
             fusion_head_layers=fusion_head_layers,
