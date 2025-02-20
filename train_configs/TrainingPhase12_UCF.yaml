@@ -8,7 +8,7 @@ model:
   num_query_token: 32
 
   # Vicuna
-  llama_model: "Vision-CAIR/vicuna-7b"
+  llama_model: "winglian/Llama-2-3b-hf"
 
   #VAD
   frozen_VAD_decoder: False
