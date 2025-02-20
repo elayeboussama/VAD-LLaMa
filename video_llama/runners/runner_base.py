@@ -108,10 +108,14 @@ class RunnerBase:
         if self.use_distributed:
             if self._wrapped_model is None:
                 local_gpu = torch.cuda.current_device()
+                torch.cuda.set_device(local_gpu)
+                self._model.cuda(local_gpu)
                 self._wrapped_model = DDP(
                     self._model,
                     device_ids=[local_gpu],
-                    find_unused_parameters=True
+                    output_device=local_gpu,
+                    find_unused_parameters=True,
+                    gradient_as_bucket_view=True  # Memory optimization
                 )
         else:
             self._wrapped_model = self._model
