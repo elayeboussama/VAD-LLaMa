@@ -152,7 +152,7 @@ class VideoLLAMA(Blip2Base):
                 torch_dtype=torch.bfloat16,
                 quantization_config=quant_config,
                 device_map="auto",  # Let HF handle device mapping
-                max_memory={0: "8GB", 1: "8GB"},  # Explicitly set memory limits per GPU
+                max_memory={0: "14GB", 1: "14GB"},  # Explicitly set memory limits per GPU
                 offload_folder="offload"  # Enable CPU offloading
             )
         else:
