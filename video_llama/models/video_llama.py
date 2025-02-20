@@ -140,18 +140,20 @@ class VideoLLAMA(Blip2Base):
 
         logging.info('Loading LLAMA Model')
         if use_4bit:
-            # Configure 4-bit quantization (using NF4 type)
             quant_config = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_compute_dtype=torch.bfloat16,
                 bnb_4bit_use_double_quant=True,
-                bnb_4bit_quant_type="nf4"
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_quant_storage=True  # Enable storage optimization
             )
             self.llama_model = LlamaForCausalLM.from_pretrained(
                 llama_model,
                 torch_dtype=torch.bfloat16,
-                quantization_config=quant_config if use_4bit else None
-                # device_map="balanced"  # distribute model across GPUs
+                quantization_config=quant_config,
+                device_map="auto",  # Let HF handle device mapping
+                max_memory={0: "12GB", 1: "12GB"},  # Explicitly set memory limits per GPU
+                offload_folder="offload"  # Enable CPU offloading
             )
         else:
             self.llama_model = LlamaForCausalLM.from_pretrained(
