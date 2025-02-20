@@ -8,7 +8,7 @@ model:
   num_query_token: 32
 
   # Vicuna
-  llama_model: "lmsys/vicuna-7b-delta-v0"
+  llama_model: "Neutralzz/BiLLa-7B-SFT"
 
   #VAD
   frozen_VAD_decoder: False
@@ -28,7 +28,7 @@ model:
   end_sym: "###"
   prompt_path: "/kaggle/working/VAD_LLaMa/prompts/alignment_image.txt"
   prompt_template: '###Human: {} ###Assistant: '
-  ckpt: '/kaggle/working/VAD_LLaMa/ckpt/finetune-vicuna7b-v2.pth'
+  ckpt: '/kaggle/working/VAD_LLaMa/ckpt/finetune-billa7b-zh.pth'
   imagebind_ckpt_path: "nielsr/imagebind-huge"
   
 
@@ -54,7 +54,7 @@ datasets:
         eval:
           name: "blip_caption"
       num_video_query_token: 32
-      tokenizer_name: "lmsys/vicuna-7b-delta-v0"
+      tokenizer_name: "Neutralzz/BiLLa-7B-SFT"
       test_flag: False
 
 run:
