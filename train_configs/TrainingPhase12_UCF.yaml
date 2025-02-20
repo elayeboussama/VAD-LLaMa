@@ -69,8 +69,8 @@ run:
   weight_decay: 0.001
   max_epoch: 10
   iters_per_epoch: 2
-  batch_size_train: 8
-  batch_size_eval: 2
+  batch_size_train: 4
+  batch_size_eval: 1
   num_workers: 4
   warmup_steps: 1000
 
@@ -85,6 +85,9 @@ run:
   valid_splits: ["eval"]
 
   device: "cuda"
-  world_size: 2
+  world_size: 1
   dist_url: "env://"
   distributed: True
+
+  # Enable gradient checkpointing to save memory
+  use_grad_checkpoint: True
