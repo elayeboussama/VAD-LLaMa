@@ -88,24 +88,32 @@ def move_to_cuda(sample):
 
 
 def prepare_sample(samples, cuda_enabled=True, fp16_enabled=False):
+    """
+    Prepare samples by moving to CUDA and applying precision casting.
+    """
     if cuda_enabled:
         samples = move_to_cuda(samples)
 
+    # Apply precision casting based on config
     if fp16_enabled:
         samples = apply_half_precision(samples)
-
+    
     return samples
 
 def apply_half_precision(samples):
+    """
+    Apply half precision to samples, preserving 8-bit quantization where used
+    """
     if isinstance(samples, torch.Tensor):
-        # Convert to FP16
-        return samples.half()  
+        # Skip tensors that are already in 8-bit format
+        if samples.dtype != torch.uint8:
+            return samples.half()
+        return samples
     elif isinstance(samples, dict):
         return {k: apply_half_precision(v) for k, v in samples.items()}
     elif isinstance(samples, list):
         return [apply_half_precision(v) for v in samples]
-    # Return as is if not tensor-like
-    return samples  
+    return samples
 
 
 def reorg_datasets_by_split(datasets):
