@@ -80,22 +80,23 @@ class RunnerBase:
     def model(self):
         """
         A property to get the DDP-wrapped model on the device.
-        Applies 8-bit quantization when possible to reduce memory usage.
+        Applies 4-bit quantization when possible to reduce memory usage.
         """
         torch.cuda.empty_cache()  # Make sure to clear cache before loading model
 
         # If model is already parallelized or quantized, skip device movement
         if not (getattr(self._model, "hf_device_map", None) or getattr(self._model, "model_parallel", False)):
             if getattr(self._model, "device", None) != self.device:
-                # Check if model has 8-bit quantization enabled
-                is_8bit_enabled = getattr(self.config.run_cfg, "use_8bit", False)
+                # Check if model has 4-bit quantization enabled
+                use_4bit = getattr(self.config.run_cfg, "use_4bit", False)
                 
-                if is_8bit_enabled:
-                    # Keep model in 8-bit format
-                    if hasattr(self._model, "to_8bit"):
-                        self._model = self._model.to_8bit()
+                if use_4bit:
+                    # Apply 4-bit quantization if supported
+                    if hasattr(self._model, "to_4bit"):
+                        self._model = self._model.to_4bit()
                     else:
-                        # Fallback to half precision if 8-bit not available
+                        # Fallback to half precision if 4-bit not available
+                        logging.warning("4-bit quantization not available, falling back to fp16")
                         self._model = self._model.half()
                 else:
                     # Use half precision as before
