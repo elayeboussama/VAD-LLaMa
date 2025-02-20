@@ -54,7 +54,7 @@ datasets:
         eval:
           name: "blip_caption"
       num_video_query_token: 32
-      tokenizer_name: "Vision-CAIR/vicuna-7b"
+      tokenizer_name: "winglian/Llama-2-3b-hf"
       test_flag: False
 
 run:
