@@ -80,15 +80,29 @@ class RunnerBase:
     def model(self):
         """
         A property to get the DDP-wrapped model on the device.
+        Applies 8-bit quantization when possible to reduce memory usage.
         """
         torch.cuda.empty_cache()  # Make sure to clear cache before loading model
-        
-        # If the model is already parallelized, skip moving to device
+
+        # If model is already parallelized or quantized, skip device movement
         if not (getattr(self._model, "hf_device_map", None) or getattr(self._model, "model_parallel", False)):
             if getattr(self._model, "device", None) != self.device:
-                # Move model to device in half precision to save memory
-                self._model = self._model.half().to(self.device)
-        
+                # Check if model has 8-bit quantization enabled
+                is_8bit_enabled = getattr(self.config.run_cfg, "use_8bit", False)
+                
+                if is_8bit_enabled:
+                    # Keep model in 8-bit format
+                    if hasattr(self._model, "to_8bit"):
+                        self._model = self._model.to_8bit()
+                    else:
+                        # Fallback to half precision if 8-bit not available
+                        self._model = self._model.half()
+                else:
+                    # Use half precision as before
+                    self._model = self._model.half()
+                    
+                self._model = self._model.to(self.device)
+
         # Wrap model in distributed data parallel if needed
         if self.use_distributed:
             if self._wrapped_model is None:
@@ -96,10 +110,11 @@ class RunnerBase:
                 self._wrapped_model = DDP(
                     self._model,
                     device_ids=[local_gpu],
-                    find_unused_parameters=True  # Add this to handle unused parameters
+                    find_unused_parameters=True
                 )
         else:
             self._wrapped_model = self._model
+
         return self._wrapped_model
 
     @property
